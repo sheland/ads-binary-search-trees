@@ -96,6 +96,62 @@ class BinarySearchTree {
     }
     visit(this._root, callback)
   }
+
+  forEachIterativeStack(callback) {
+    const stack = [];
+    let i = 0;
+    let node = this._root;
+    while (node || stack.length > 0) {
+      // slide to the left (all the way)
+      while (node) {
+        stack.push(node);
+        node = node.left;
+      }
+
+      if (stack.length > 0) {
+        // one pop this time
+        node = stack.pop();
+        callback({ key: node.key, value: node.value }, i, this);
+        i += 1;
+
+        // slide to the right
+        // (only one step because we'll need to hit the child's
+        // left subtree and the child itself before going right again)
+        node = node.right;
+      }
+    }
+  }
+
+  forEachIterativeNoStack(callback) {
+    let node = this._root;
+    let prev = this._root?.parent;
+
+    let i = 0;
+    while (node) {
+      let next;
+      if (prev === node.parent && node.left) {
+        // Go left
+        next = node.left;
+
+      } else if ((prev === node.parent && !node.left) || prev === node.left) {
+        // visit and go right
+        callback({ key: node.key, value: node.value }, i, this);
+        i += 1;
+
+        if (node.right) {
+          next = node.right;
+        } else {
+          next = node.parent;
+        }
+
+      } else {
+        // Go up
+        next = node.parent;
+      }
+      prev = node;
+      node = next;
+    }
+  }
 }
 
 export default BinarySearchTree;
