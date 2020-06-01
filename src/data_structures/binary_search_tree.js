@@ -24,7 +24,7 @@ class BinarySearchTree {
     let parent = node?.parent;
 
     // Nodes without keys are considered sentinels
-    while (node?.key) {
+    while (node && node.key !== undefined) {
       if (key < node.key) {
         parent = node;
         node = node.left;
@@ -78,7 +78,63 @@ class BinarySearchTree {
   }
 
   delete(key) {
-    // TODO
+    const { node, parent } = this._findNode(key);
+
+    if (!node) {
+      return undefined;
+    }
+
+    let replacement;
+
+    if (node.left && node.right) {
+      // Both children (complex case)
+      // Find in-order successor and transpose it to node's spot
+      let successor = node.right;
+      
+      if (successor.left) {
+        // Walk all the way to the left
+        while (successor.left) {
+          successor = successor.left;
+        }
+
+        // Make sure its old right child is taken care of
+        successor.parent.left = successor.right;
+        if (successor.right) {
+          successor.right.parent = successor.parent;
+        }
+
+        // Assign the new right child
+        successor.right = node.right;
+        node.right.parent = successor;
+      }
+
+      successor.left = node.left;
+      successor.left.parent = successor;
+
+      replacement = successor;
+
+    } else {
+      // One or no child -> acts like a linked list
+      replacement = node.left ? node.left : node.right;
+
+    }
+
+    // fixup links to parent
+    if (parent) {
+      const direction = node === parent.left ? 'left' : 'right';
+      parent[direction] = replacement;
+
+    } else {
+      this._root = replacement;
+    }
+
+    if (replacement) {
+      replacement.parent = parent;
+    }
+
+    // fix count and return
+    this._count -= 1;
+    return node.value;
   }
 
   count() {
