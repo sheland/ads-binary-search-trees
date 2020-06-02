@@ -164,17 +164,15 @@ class BinarySearchTree {
         node = node.left;
       }
 
-      if (stack.length > 0) {
-        // one pop this time
-        node = stack.pop();
-        callback({ key: node.key, value: node.value }, i, this);
-        i += 1;
+      // one pop this time
+      node = stack.pop();
+      callback({ key: node.key, value: node.value }, i, this);
+      i += 1;
 
-        // slide to the right
-        // (only one step because we'll need to hit the child's
-        // left subtree and the child itself before going right again)
-        node = node.right;
-      }
+      // slide to the right
+      // (only one step because we'll need to hit the child's
+      // left subtree and the child itself before going right again)
+      node = node.right;
     }
   }
 
