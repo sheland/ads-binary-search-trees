@@ -16,7 +16,55 @@ class BinarySearchTree {
   }
 
   insert(key, value = true) {
-    // TODO
+    const newNode = new BSTNode ({key: key, value: value, undefined, undefined, undefined});
+
+    // replace root with new node if root is undefined 
+    // return early
+    if (this._root === undefined) {
+      this._root = newNode
+      this._count++ 
+      return
+    }
+
+    let node = this._root
+
+    while(node) {
+      // replace current node with new node if same key
+      // replacement -> do not increment count 
+      if(newNode.key === node.key) {
+        node.value = newNode.value
+        return 
+
+        // if new node is less than current node, move left 
+      } else if (newNode.key < node.key) {
+        if (node.left) {
+          // move left
+          this.parent = node
+          node = node.left
+        } else {
+          // if left node does not exist, append new node as leaf
+          node.left = newNode
+          this._count++
+          node.left.parent = this.parent
+          return 
+        }
+        // move right 
+      } else if (newNode.key > node.key) {
+        if (node.right) {
+          // move right 
+          this.parent = node
+          node = node.right
+        } else {
+          // append new node as leaf
+          node.right = newNode
+          this._count++
+          node.right.parent = this.parent
+          return
+        }
+      }
+
+    }
+
   }
 
   lookup(key) {
